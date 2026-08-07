@@ -1,0 +1,61 @@
+<html>
+<head><title>Dice</title></head>
+<body>
+    <button id="button2">D2</button>
+    <button id="button3">D3</button>
+    <button id="button4">D4</button>
+    <button id="button6">D6</button>
+    <button id="button8">D8</button>
+    <button id="button10">D10</button>
+    <button id="button12">D12</button>
+    <button id="button20">D20</button>
+    <button id="button100">D100</button>
+    <button style="background-color:yellow;" id="clearButton">CLEAR</button>
+    <br>
+    <br>
+    <label for="typeTimes">Dice Number: </label><input id="typeTimes" type="number" min="-100" max="100">
+    <button id="makeCountZero">Reset Dice Count to Zero</button>
+    <br>
+    <label for="typePlus">Modifier: </label><input id="typePlus" type="number" min="-100" max="100">
+    <button id="makeZero">Reset Modifier to Zero</button>
+    <div id="rollDiv"></div>
+
+<script>
+    function rollDice(sides) {
+        const count = Number(document.getElementById("typeTimes").value) || 1;
+        var rolls = [];
+        for (let i = 0; i < count; i++) {
+                rolls.push(Math.floor(Math.random() * sides) + 1);
+            }
+        var mod = document.getElementById("typePlus").value;
+        var result = rolls.reduce((a, b) => a + b, 0) + Number(mod);
+        if (mod == 0 || mod == null) {document.getElementById('rollDiv').innerHTML += "<p>" + count +"D" + sides + ": " + result + "</p>";}
+        else if (mod < 0) {{document.getElementById('rollDiv').innerHTML += "<p>" + count +"D" + sides + " - " + Math.abs(mod) + ": " + result + "</p>";};}
+        else {document.getElementById('rollDiv').innerHTML += "<p>" + count +"D" + sides + " + " + mod + ": " + result + "</p>";};
+    }
+    
+    function clear() {
+        document.getElementById('rollDiv').innerHTML = "";
+    }
+    
+    
+
+document.getElementById('button2').addEventListener('click', function() { rollDice(2); });
+    document.getElementById('button3').addEventListener('click', function() { rollDice(3); });    
+    document.getElementById('button4').addEventListener('click', function() { rollDice(4); });
+    document.getElementById('button6').addEventListener('click', function() { rollDice(6); });
+    document.getElementById('button8').addEventListener('click', function() { rollDice(8); });
+    document.getElementById('button10').addEventListener('click', function() { rollDice(10); });
+    document.getElementById('button12').addEventListener('click', function() { rollDice(12); });
+    document.getElementById('button20').addEventListener('click', function() { rollDice(20); });
+
+document.getElementById('button100').addEventListener('click', function() { rollDice(100); });
+    
+    document.getElementById('clearButton').addEventListener('click', function() { clear(); });
+
+document.getElementById('makeZero').addEventListener('click', function() { document.getElementById("typePlus").value = null; });
+
+document.getElementById('makeCountZero').addEventListener('click', function() { document.getElementById("typeTimes").value = null; });
+</script>
+</body>
+</html>
