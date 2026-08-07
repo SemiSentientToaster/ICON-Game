@@ -1,0 +1,83 @@
+<html>
+<head>
+  <title>Sig-Figs!</title>
+  <style>
+    .leading-zero { color: red; }
+    .trailing-zero { color: blue; }
+    /* Keeping the decimal separate for clarity */
+    .decimal { color: black; font-weight: bold; } 
+    h1 span { font-family: monospace; }
+  </style>
+</head>
+<body>
+    <a href="sig-figs-index.html">&#8592 Back</a>
+    <br><br>
+    <h3 style="color:#640000;">DISCLAIMER: Tool may function improperly if measurements without decimal points are entered, with the exception of measurements that are integers that are scaled by a multiple of 10.</h3>
+    <br><br>
+    <!-- Use return false to prevent the page from refreshing on submit -->
+  <form id="firstForm" onsubmit="doTheThing(); return false;">
+    <label for="yourSigFigs">Enter Value:</label>
+    <input type="text" id="yourSigFigs">
+    <input form="firstForm" type="submit" value="Submit">
+  </form>
+
+  <div id="tutorial-show" style="display:none;">
+    <h1 id="sigFigified"></h1>
+    <ol>
+      <li>Don't count the leading zeros. They are not significant.</li>
+      <li>Count all non-zero digits.</li>
+      <li>Count zeros trapped between or to the right of significant digits.</li>
+      <li>Don't count trailing zeros if the measurement has no decimal point.</li>
+    </ol>
+    <form id="secondForm" onsubmit="checkAnswer(document.getElementById('answer').value); return false;">
+        <h3>This measurement has <input id="answer" type="number"> Significant Figures.</h3>
+        <input form="secondForm" type="submit" value="Submit">
+    </form>
+    <h1 id="areYouRight"></h1>
+  </div>
+
+  <script>
+    let figNum = 0;
+    let thingDone = false;
+    
+    function doTheThing() {
+      figNum = 0;
+    
+      document.getElementById('tutorial-show').style.display = "block";
+
+      const rawInput = document.getElementById("yourSigFigs").value;
+      const chars = rawInput.split('');
+
+      const hasDecimal = rawInput.includes('.');
+
+      const firstActive = chars.findIndex(c => c !== '0' && c !== '.');
+      
+      const reverseIdx = [...chars].reverse().findIndex(c => c !== '0' && c !== '.')
+      const lastActive = reverseIdx === -1 ? -1 : chars.length - 1 - reverseIdx;
+
+      const htmlString = chars.map((char, index) => {
+        let className = "";
+        
+        if (char === '.') {
+          className = "decimal";
+        } else if (firstActive === -1 || (index < firstActive && char === '0')) {
+          className = "leading-zero";
+        } else if (index > lastActive && char === '0') {
+          className = "trailing-zero";
+          if (hasDecimal) {figNum++;}
+        } else {figNum++;}
+
+        return `<span class="${className}">${char}</span>`;
+      }).join('');
+
+      document.getElementById('sigFigified').innerHTML = htmlString;
+      thingDone = true;
+    }
+    
+    function checkAnswer(a) {
+        if (Number(a) === figNum) {document.getElementById('areYouRight').textContent = "Correct!"}
+        else {document.getElementById('areYouRight').textContent = "Try Again..."}
+    }
+  </script>
+</body>
+</html>

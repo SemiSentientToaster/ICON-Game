@@ -1,0 +1,188 @@
+<html>
+    <head>
+        <title>Sig-Figs!</title>
+        <style>
+            .leading-zero { color: red; }
+            .trailing-zero { color: blue; }
+            .decimal { color: black; font-weight: bold; } 
+            h1 span { font-family: monospace; }
+        </style>
+    </head>
+    <body>
+        <a href="sig-figs-index.html">&#8592 Back</a>
+        <br><br>
+        <h3 style="color:#640000;">DISCLAIMER: Tool may function improperly if measurements without decimal points are entered, with the exception of measurements that are integers that are scaled by a multiple of 10.</h3>
+        <br><br>
+        <form id="firstForm" onsubmit="doTheThing(answer.value); return false;">
+            <label for="yourSigFigs1">Enter First Value:</label>
+            <input type="text" id="yourSigFigs1">
+            
+            <br>
+            
+            <label for="yourSigFigs2">Enter Second Value:</label>
+            <input type="text" id="yourSigFigs2">
+        
+            <p>What do you want to do?</p>
+            <input type="radio" name="answer" value="A"> Add<br>
+            <input type="radio" name="answer" value="S"> Subtract<br>
+            <input type="radio" name="answer" value="M"> Multiply<br>
+            <input type="radio" name="answer" value="D"> Divide<br>
+            
+            <br>
+            
+            <input form="firstForm" type="submit" value="Submit">
+        </form>
+        
+        <div id="tutorial-show" style="display:none;">
+            <h1 id="equation">
+                <span id="sigFigified1"></span>
+                <span id="operator"></span>
+                <span id="sigFigified2"></span> =
+                <span id="numAns"></span>
+            </h1>
+            <form id="secondForm" onsubmit="checkAnswer(document.getElementById('answer').value); return false;">
+                <h3 id="question">The resulting measurement should have <input id="answer" type="number"> significant figures.</h3>
+                <input form="secondForm" type="submit" value="Submit">
+            </form>
+            <h1 id="areYouRight"></h1>
+        </div>
+        
+        <script>
+            let figNum1 = 0;
+            let figNum2 = 0;
+            let figNum3 = 0;
+
+            let decimalP1 = 0;
+            let decimalP2 = 0;
+            
+            function doTheThing(operator) {
+                if (operator === "A" || operator === "S") {document.getElementById("question").innerHTML = 'The resulting measurement should have <input id="answer" type="number"> decimal places.';}
+                else {document.getElementById("question").innerHTML = 'The resulting measurement should have <input id="answer" type="number"> significant figures.'}
+                
+                figNum1 = 0;
+                figNum2 = 0;
+                figNum3 = 0;
+
+                decimalP1 = 0;
+                decimalP2 = 0;
+      
+                document.getElementById('tutorial-show').style.display = "block";
+                
+                const rawInput1 = document.getElementById("yourSigFigs1").value;
+                const rawInput2 = document.getElementById("yourSigFigs2").value;
+                
+                const number1 = Number(rawInput1);
+                const number2 = Number(rawInput2);
+                
+                const chars1 = rawInput1.split('');
+                const chars2 = rawInput2.split('');
+                
+                const firstActive1 = chars1.findIndex(c => c !== '0' && c !== '.');
+      
+                const reverseIdx1 = [...chars1].reverse().findIndex(c => c !== '0' && c !== '.');
+                const lastActive1 = reverseIdx1 === -1 ? -1 : chars1.length - 1 - reverseIdx1;
+                
+                
+                const firstActive2 = chars2.findIndex(c => c !== '0' && c !== '.');
+      
+                const reverseIdx2 = [...chars2].reverse().findIndex(c => c !== '0' && c !== '.');
+                const lastActive2 = reverseIdx2 === -1 ? -1 : chars2.length - 1 - reverseIdx2;
+
+                const hasDecimal1 = rawInput1.includes('.');
+                const hasDecimal2 = rawInput2.includes('.');
+                
+                let hasReachedDecimal1 = false;
+                let hasReachedDecimal2 = false;
+                
+                const htmlString1 = chars1.map((char, index) => {
+                    let className = "";
+                    
+                    if (char === '.') {
+                      className = "decimal";
+                      hasReachedDecimal1 = true;
+                    } else if (firstActive1 === -1 || (index < firstActive1 && char === '0')) {
+                      className = "leading-zero";
+                    } else if (index > lastActive1 && char === '0') {
+                      className = "trailing-zero";
+                      if (hasDecimal1) {figNum1++;}
+                      if (hasReachedDecimal1) {decimalP1++;}
+                    } else {figNum1++; if (hasReachedDecimal1) {decimalP1++;}}
+            
+                    return `<span class="${className}">${char}</span>`;
+                  }).join('');
+                  
+                const htmlString2 = chars2.map((char, index) => {
+                    let className = "";
+                    
+                    if (char === '.') {
+                      className = "decimal";
+                      hasReachedDecimal2 = true;
+                    } else if (firstActive2 === -1 || (index < firstActive2 && char === '0')) {
+                      className = "leading-zero";
+                    } else if (index > lastActive2 && char === '0') {
+                      className = "trailing-zero";
+                      if (hasDecimal2) {figNum2++;}
+                      if (hasReachedDecimal2) {decimalP2++;}
+                    } else {figNum2++; if (hasReachedDecimal2) {decimalP2++;}}
+            
+                    return `<span class="${className}">${char}</span>`;
+                  }).join('');
+                  
+                document.getElementById('sigFigified1').innerHTML = htmlString1;
+                document.getElementById('sigFigified2').innerHTML = htmlString2;
+                
+                if (operator === "A") {
+                        document.getElementById("operator").textContent = "+";
+                        document.getElementById("numAns").textContent = number1 + number2;
+                        if (decimalP1 <= decimalP2) {
+                            figNum3 = decimalP1;
+                        }
+                        else {
+                            figNum3 = decimalP2;
+                        }
+                    }
+                    else if (operator === "S") {
+                        document.getElementById("operator").textContent = "-";
+                        document.getElementById("numAns").textContent = number1 - number2;
+                        if (decimalP1 <= decimalP2) {
+                            figNum3 = decimalP1;
+                        }
+                        else {
+                            figNum3 = decimalP2;
+                        }
+                    }
+                else if (operator === "M") {
+                    document.getElementById("operator").textContent = "*";
+                    document.getElementById("numAns").textContent = number1 * number2;
+                    if (figNum1 <= figNum2) {
+                        figNum3 = figNum1;
+                    }
+                    else {
+                        figNum3 = figNum2;
+                    }
+                }
+                else if (operator === "D") {
+                    document.getElementById("operator").textContent = "/";
+                    document.getElementById("numAns").textContent = number1 / number2;
+                    if (figNum1 <= figNum2) {
+                        figNum3 = figNum1;
+                    }
+                    else {
+                        figNum3 = figNum2;
+                    }
+                }
+                else {document.getElementById("operator").textContent = "error";};
+                
+                
+                
+                
+            }
+            
+            function checkAnswer(a) {
+                if (Number(a) === figNum3) {document.getElementById('areYouRight').textContent = "Correct!"}
+                else {document.getElementById('areYouRight').textContent = "Try Again..."}
+            }
+            
+        </script>
+    </body>
+</html>
