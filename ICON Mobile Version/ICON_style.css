@@ -1,0 +1,77 @@
+html {
+	background-color: black;
+	color: white;
+}
+
+#theGrid {
+	display: grid;
+	grid-template-columns: repeat(5, 5dvmin);
+	grid-template-rows: repeat(9, 5dvmin);
+	align-content: center;
+	justify-content: center;
+	align-items: center;
+	justify-items: center;
+	min-height: calc(100vh - 45dvmin);
+	width: 100%;
+	gap: 1.5dvmin;
+}
+
+#theGrid h1 {font-size: 1.875dvmin;}
+
+#title, #press-start {
+	box-sizing: border-box;
+	text-align: center;
+	padding: 2dvmin 0;
+	height: 7dvmin;
+}
+h1 {font-size: 3dvmin;}
+
+body, h1 {margin: 0;}
+
+#mobile-control-div, #scoreDisplay {display: none;}
+
+#press-start {
+	animation: press-start-fade 2s infinite;
+}
+
+@keyframes press-start-fade {0% {opacity: 0;} 50% {opacity: 1;} 100% {opacity: 0;}}
+
+#scoreDisplay {
+	box-sizing: border-box;
+	text-align: center;
+	padding: 2dvmin 0;
+}
+
+@keyframes arbiter-charge {0% {color: white;} 50% {color: red;} 100% {color: white;}}
+
+@keyframes arbiter-warning {0% {color: white;} 50% {color: yellow;} 100% {color: white;}}
+
+#settings h1 {
+	box-sizing: border-box;
+	text-align: center;
+	padding: 2dvmin 0;
+	height: 7dvmin;
+	font-size: 2dvmin;
+}
+
+#mobile-control-div {
+	grid-template-columns: repeat(8, 8dvmin);
+	grid-template-rows: repeat(3, 8dvmin);
+	align-content: center;
+	justify-content: center;
+	align-items: center;
+	justify-items: center;
+	height: auto;
+	width: 100%;
+	gap: 1dvmin;
+	margin-top: 5dvmin;
+}
+
+.dpad-button {
+	border: 1px solid white;
+	padding: 3dvmin; /* button size */
+
+	touch-action: manipulation; 
+    user-select: none; 
+    -webkit-user-select: none; /* For Safari support */
+}
